@@ -20,17 +20,16 @@ namespace Zayno.Build
             "Assets/_config/content_Arabic/DB Arabic_Word.asset"
         };
 
+        public static void PreExport()
+        {
+            PrepareWebGLProject();
+            Debug.Log("ANTURA_WEBGL_PREEXPORT_OK");
+        }
+
         [MenuItem("Zayno/Build Antura WebGL")]
         public static void Perform()
         {
-            ValidateArabicContent();
-            if (!EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL))
-                throw new InvalidOperationException("Unable to activate the WebGL build target.");
-
-            AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult addressablesResult);
-            if (!string.IsNullOrEmpty(addressablesResult.Error))
-                throw new InvalidOperationException("Addressables build failed: " + addressablesResult.Error);
-
+            PrepareWebGLProject();
             var scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray();
             if (scenes.Length == 0)
                 throw new InvalidOperationException("No enabled scenes were found in EditorBuildSettings.");
@@ -38,8 +37,6 @@ namespace Zayno.Build
             var output = Environment.GetEnvironmentVariable("ANTURA_WEBGL_OUTPUT");
             if (string.IsNullOrWhiteSpace(output)) output = DefaultOutput;
             Directory.CreateDirectory(output);
-            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Brotli;
-            PlayerSettings.WebGL.decompressionFallback = false;
 
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
@@ -53,6 +50,19 @@ namespace Zayno.Build
                 throw new InvalidOperationException("WebGL build failed: " + report.summary.result + " (" + report.summary.totalErrors + " errors).");
 
             Debug.Log("ANTURA_WEBGL_BUILD_OK path=" + output + " size=" + report.summary.totalSize);
+        }
+
+        private static void PrepareWebGLProject()
+        {
+            ValidateArabicContent();
+            if (!EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL))
+                throw new InvalidOperationException("Unable to activate the WebGL build target.");
+
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Brotli;
+            PlayerSettings.WebGL.decompressionFallback = false;
+            AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult addressablesResult);
+            if (!string.IsNullOrEmpty(addressablesResult.Error))
+                throw new InvalidOperationException("Addressables build failed: " + addressablesResult.Error);
         }
 
         private static void ValidateArabicContent()
