@@ -4,7 +4,7 @@ This branch prepares the official Antura Unity project for a browser build witho
 
 ## Pinned source and engine
 
-- Source branch: zayno-webgl, forked from the verified official commit 2ba9d7d9f0170d807ce4048f87821e47b16efa8b.
+- Source branch: zayno-webgl, forked from official commit 2ba9d7d9f0170d807ce4048f87821e47b16efa8b.
 - Unity: 6000.5.10f1 with WebGL Build Support.
 - Git LFS files must be fully downloaded before Unity imports or builds the project.
 
@@ -20,16 +20,17 @@ The current multiedition branch does not contain the same phrase/audio inventory
 2. Select branch zayno-webgl and Unity 6000.5.10f1.
 3. Enable Git LFS checkout and the WebGL Build Support module.
 4. Set target platform to WebGL.
-5. Invoke Zayno.Build.WebGLBuild.Perform as the custom build method or from a batchmode pre-build step.
-6. Publish the complete Builds/ZaynoWebGL directory as the artifact.
+5. In Advanced Settings, set the Pre-Export Method to Zayno.Build.WebGLBuild.PreExport.
+6. Publish the full WebGL player output and Addressables as build artifacts.
 
-Batchmode equivalent:
+For a local or command-line build, use:
 
     Unity -batchmode -quit -projectPath . -executeMethod Zayno.Build.WebGLBuild.Perform -logFile -
 
 ## Required validation before Zayno integration
 
-- Build log contains ANTURA_ARABIC_CONTENT_OK and ANTURA_WEBGL_BUILD_OK.
+- Build log contains ANTURA_ARABIC_CONTENT_OK and ANTURA_WEBGL_PREEXPORT_OK.
+- A command-line build also contains ANTURA_WEBGL_BUILD_OK.
 - Addressables are present and load from the final same-origin URL.
 - Arabic contextual forms, diacritics, words and audio are tested in desktop Chrome, Android Chrome and iOS Safari.
 - Every enabled minigame launches through Antura's Teacher and progression systems.
