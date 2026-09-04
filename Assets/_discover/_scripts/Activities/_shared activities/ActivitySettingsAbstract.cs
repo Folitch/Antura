@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 
 namespace Antura.Discover.Activities
